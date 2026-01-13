@@ -201,11 +201,13 @@ Full games against Stockfish to measure playing strength:
 ## Submission
 
 1. Train your model
-2. Push to Hugging Face Hub under the class organization
-3. Your model will be automatically evaluated
+2. Log in to Hugging Face: `hf auth login`
+3. Submit your model using the submission script:
 
-```python
-# Push your model
-model.push_to_hub("your-model-name", organization="LLM-course")
-tokenizer.push_to_hub("your-model-name", organization="LLM-course")
+```bash
+python submit.py --model_path ./my_model/final_model --model_name your-model-name
 ```
+
+The script will:
+- Upload your model to the LLM-course organization
+- Include your HF username in the model card for tracking

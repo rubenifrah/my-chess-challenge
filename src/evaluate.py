@@ -500,7 +500,7 @@ def main():
         help="Path to the model or Hugging Face model ID"
     )
     parser.add_argument(
-        "--mode", type=str, default="both", choices=["legal", "winrate", "both"],
+        "--mode", type=str, default="legal", choices=["legal", "winrate", "both"],
         help="Evaluation mode: 'legal' for legal move rate, 'winrate' for games, 'both' for both"
     )
     parser.add_argument(

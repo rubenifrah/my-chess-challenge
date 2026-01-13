@@ -151,9 +151,9 @@ def print_parameter_budget(config: "ChessConfig", limit: int = 1_000_000) -> Non
     print(f"  Remaining:{limit - estimates['total']:>10,}")
     
     if estimates['total'] <= limit:
-        print(f"\n✓ Within budget! ({estimates['total'] / limit * 100:.1f}% used)")
+        print(f"\n Within budget! ({estimates['total'] / limit * 100:.1f}% used)")
     else:
-        print(f"\n✗ OVER BUDGET by {estimates['total'] - limit:,} parameters!")
+        print(f"\n OVER BUDGET by {estimates['total'] - limit:,} parameters!")
     
     print("=" * 60)
 
