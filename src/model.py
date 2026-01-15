@@ -337,6 +337,12 @@ class ChessForCausalLM(PreTrainedModel):
             position_ids = torch.arange(seq_len, device=device).unsqueeze(0).expand(batch_size, -1)
         
         # Get embeddings
+        # DEBUG: Check indices
+        if input_ids.max() >= self.config.vocab_size:
+            raise ValueError(f"Input ID {input_ids.max()} exceeds vocab size {self.config.vocab_size}")
+        if input_ids.min() < 0:
+             raise ValueError(f"Input ID {input_ids.min()} is negative")
+
         token_embeds = self.wte(input_ids)
         position_embeds = self.wpe(position_ids)
         hidden_states = self.drop(token_embeds + position_embeds)
@@ -359,7 +365,8 @@ class ChessForCausalLM(PreTrainedModel):
             shift_labels = labels[..., 1:].contiguous()
             
             # Flatten for cross-entropy
-            loss_fct = nn.CrossEntropyLoss(ignore_index=self.config.pad_token_id)
+            # Note: src/data.py uses -100 for ignored labels
+            loss_fct = nn.CrossEntropyLoss(ignore_index=-100)
             loss = loss_fct(
                 shift_logits.view(-1, shift_logits.size(-1)),
                 shift_labels.view(-1),

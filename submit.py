@@ -79,8 +79,17 @@ def main():
         tmp_path = Path(tmp_dir)
 
         # Save model and tokenizer
+        # Save model and tokenizer
         model.save_pretrained(tmp_path)
         tokenizer.save_pretrained(tmp_path)
+        
+        # Copy source code to ensure custom classes work on the Hub
+        # This is critical for CoordinateTokenizer and ChessForCausalLM
+        import shutil
+        src_dst = tmp_path / "src"
+        if os.path.exists("src"):
+            shutil.copytree("src", src_dst, dirs_exist_ok=True)
+            print(f"Bundled source code from src/ to {src_dst}")
 
         # Create model card with submitter info
         model_card = f"""---

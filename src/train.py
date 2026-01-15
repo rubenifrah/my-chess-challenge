@@ -21,6 +21,7 @@ from transformers import (
 from src.data import ChessDataCollator, create_train_val_datasets
 from src.model import ChessConfig, ChessForCausalLM
 from src.tokenizer import ChessTokenizer
+from src.tokenizer_v2 import CoordinateTokenizer
 from src.utils import count_parameters, print_parameter_budget
 
 
@@ -40,7 +41,7 @@ def parse_args():
         help="Embedding dimension"
     )
     parser.add_argument(
-        "--n_layer", type=int, default=4,
+        "--n_layer", type=int, default=8,
         help="Number of transformer layers"
     )
     parser.add_argument(
@@ -48,7 +49,7 @@ def parse_args():
         help="Number of attention heads"
     )
     parser.add_argument(
-        "--n_ctx", type=int, default=256,
+        "--n_ctx", type=int, default=384,
         help="Maximum context length"
     )
     parser.add_argument(
@@ -141,12 +142,15 @@ def main():
     print("=" * 60)
     
     # Build tokenizer from dataset
-    print("\nBuilding tokenizer from dataset...")
-    tokenizer = ChessTokenizer.build_vocab_from_dataset(
-        dataset_name=args.dataset_name,
-        min_frequency=500,  # Only keep moves that appear at least 500 times
-        max_samples=100000,  # Use 100k games to build vocabulary
-    )
+    # print("\nBuilding tokenizer from dataset...")
+    # tokenizer = ChessTokenizer.build_vocab_from_dataset(
+    #     dataset_name=args.dataset_name,
+    #     min_frequency=500,  # Only keep moves that appear at least 500 times
+    #     max_samples=100000,  # Use 100k games to build vocabulary
+    # )
+    
+    print("\nInitializing CoordinateTokenizer...")
+    tokenizer = CoordinateTokenizer()
     print(f"   Vocabulary size: {tokenizer.vocab_size}")
     
     # Use the vocab size from tokenizer (override args if provided)
@@ -231,6 +235,7 @@ def main():
     
     # Train
     print("\nStarting training...")
+    print(f"   Device: {training_args.device}")
     trainer.train()
     
     # Save final model

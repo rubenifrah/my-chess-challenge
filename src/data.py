@@ -86,6 +86,12 @@ class ChessDataset(Dataset):
         # Squeeze batch dimension
         input_ids = encoding["input_ids"].squeeze(0)
         attention_mask = encoding["attention_mask"].squeeze(0)
+
+        # SAFETY CHECK: Clamp tokens to be within vocab range
+        # This prevents "device-side assert triggered" if tokenizer produces unexpected IDs
+        if input_ids.max() >= self.tokenizer.vocab_size:
+            print(f"WARNING: Found token ID {input_ids.max()} >= vocab size {self.tokenizer.vocab_size}. Clamping.")
+            input_ids = torch.clamp(input_ids, max=self.tokenizer.vocab_size - 1)
         
         # Labels are the same as input_ids (model will shift internally)
         labels = input_ids.clone()
